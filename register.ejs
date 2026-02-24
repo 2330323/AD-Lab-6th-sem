@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="split-screen">
+        <div class="left-panel">
+            <div style="text-align: center;">
+                <h1>Join Us!</h1>
+                <p style="opacity: 0.8;">Create your student account.</p>
+                <div style="font-size: 80px;">🚀</div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div style="max-width: 400px; margin: 0 auto; width: 100%;">
+                <h2>Register</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Fill in your details.</p>
+                
+                <% if (error) { %> <p style="color: red;"><%= error %></p> <% } %>
+
+                <form action="/register" method="POST">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="first_name" placeholder="First Name" required>
+                        <input type="text" name="last_name" placeholder="Last Name" required>
+                    </div>
+                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+
+                    <button type="submit" class="primary">Sign Up</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center;">
+                    Already have an account? <a href="/login" style="color: var(--accent);">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

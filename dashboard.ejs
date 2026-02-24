@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <style>
+        /* Add specific styles for the hidden sections */
+        .hidden { display: none; }
+        .active-menu { background: var(--accent); color: white; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <h2 style="color: var(--accent); margin-bottom: 40px;">StudentPortal</h2>
+            
+            <div id="btn-dashboard" class="menu-item active-menu" onclick="showSection('dashboard')">
+                <ion-icon name="grid-outline"></ion-icon> Dashboard
+            </div>
+            <div id="btn-profile" class="menu-item" onclick="showSection('profile')">
+                <ion-icon name="person-outline"></ion-icon> Profile
+            </div>
+            
+            <div style="margin-top: auto;">
+                <button id="theme-toggle" class="theme-switch">🌙 Dark Mode</button>
+                <a href="/logout" class="menu-item" style="color: #ff4444; margin-top: 10px;">
+                    <ion-icon name="log-out-outline"></ion-icon> Logout
+                </a>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="banner">
+                <div>
+                    <h1>Hello, <%= user.first_name %>!</h1>
+                    <p>Welcome to your student portal.</p>
+                </div>
+                <div style="font-size: 60px;">🎓</div>
+            </div>
+
+            <div id="section-dashboard">
+                <h3>Academic Results</h3>
+                <div class="card-grid">
+                    <% if (grades.length > 0) { %>
+                        <% grades.forEach(function(grade) { %>
+                        <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="margin: 0;"><%= grade.subject %></h4>
+                                <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 5px;">Score: <%= grade.score %></p>
+                            </div>
+                            <div style="background: rgba(172, 88, 233, 0.1); color: var(--accent); padding: 15px; border-radius: 10px; font-weight: bold; font-size: 1.2em;">
+                                <%= grade.grade %>
+                            </div>
+                        </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No grades uploaded yet.</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <div id="section-profile" class="hidden">
+                <h3>Edit Profile</h3>
+                
+                <div class="card" style="max-width: 500px;">
+                    <form action="/update-profile" method="POST">
+                        <label>Update Details</label><br><br>
+                        <input type="text" name="username" value="<%= user.username %>" placeholder="Username" required>
+                        <input type="email" name="email" value="<%= user.email %>" placeholder="Email" required>
+                        <button type="submit" class="primary">Save Changes</button>
+                    </form>
+                </div>
+
+                <h3>Security</h3>
+                <div class="card" style="max-width: 500px;">
+                    <form action="/reset-password" method="POST">
+                        <label>Change Password</label><br><br>
+                        <input type="password" name="new_password" placeholder="New Password" required>
+                        <button type="submit" class="primary" style="background: #ff4444;">Reset Password</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Logic to switch tabs
+        function showSection(sectionName) {
+            // Hide all sections
+            document.getElementById('section-dashboard').classList.add('hidden');
+            document.getElementById('section-profile').classList.add('hidden');
+            
+            // Remove active class from buttons
+            document.getElementById('btn-dashboard').classList.remove('active-menu');
+            document.getElementById('btn-profile').classList.remove('active-menu');
+
+            // Show selected section
+            document.getElementById('section-' + sectionName).classList.remove('hidden');
+            document.getElementById('btn-' + sectionName).classList.add('active-menu');
+        }
+
+        // 2. Dark Mode Logic
+        const toggleBtn = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+        
+        if(localStorage.getItem('theme') === 'dark') {
+            root.setAttribute('data-theme', 'dark');
+            toggleBtn.innerText = '☀️ Light Mode';
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            if (root.getAttribute('data-theme') === 'dark') {
+                root.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                toggleBtn.innerText = '🌙 Dark Mode';
+            } else {
+                root.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                toggleBtn.innerText = '☀️ Light Mode';
+            }
+        });
+    </script>
+</body>
+</html>
