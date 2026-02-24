@@ -3,204 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ML Experiments</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Scraper | Minimal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <h1 class="logo">AD Lab Experiment 2</h1>
-                <p class="tagline">Classification & Regression Made Simple</p>
+    
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-circle"></div>
+                <h1>Scraper</h1>
             </div>
-        </div>
-    </header>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" onclick="switchTab('url-scrape')">
+                    Single URL
+                </button>
+                <button class="nav-item" onclick="switchTab('topic-search')">
+                    Topic Search
+                </button>
+                <button class="nav-item" onclick="switchTab('batch-scrape')">
+                    Batch Process
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>AI Powered v2.0</p>
+            </div>
+        </aside>
 
-    <!-- Main Container -->
-    <main class="main-container">
-        <!-- Tab Navigation -->
-        <nav class="tab-nav">
-            <button class="tab-btn active" data-tab="classification">
-                <span class="tab-icon">🖼️</span>
-                <span class="tab-label">Image Classification</span>
-            </button>
-            <button class="tab-btn" data-tab="regression">
-                <span class="tab-icon">📈</span>
-                <span class="tab-label">Stock Prediction</span>
-            </button>
-        </nav>
-
-        <!-- Classification Section -->
-        <section id="classification" class="content-section active">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Image Classification</h2>
-                    <p class="subtitle">Upload an image to classify using MobileNetV2</p>
-                </div>
-
-                <div class="card-body">
-                    <!-- Model Selection -->
-                    <div class="model-selector">
-                        <label for="modelSelect">Choose Model:</label>
-                        <select id="modelSelect" class="select-input">
-                            <optgroup label="ImageNet Pre-trained (1000 classes)">
-                                <option value="mobilenet" selected>MobileNetV2 - Fast & Accurate</option>
-                                <option value="resnet50">ResNet50 - Deep Learning</option>
-                                <option value="vgg16">VGG16 - Classic CNN</option>
-                                <option value="inception">InceptionV3 - Advanced</option>
-                            </optgroup>
-                            <optgroup label="High-Accuracy Hybrid Models (Cat vs Dog)" id="enhancedModels">
-                                <option value="svm_enhanced" disabled>SVM Enhanced - 92-99% accuracy (not trained)</option>
-                                <option value="rf_enhanced" disabled>Random Forest Enhanced - 90-98% accuracy (not trained)</option>
-                                <option value="transfer_learning" disabled>Transfer Learning - 95%+ accuracy (not trained)</option>
-                            </optgroup>
-                        </select>
-                        <p class="model-hint">
-                            <strong>High-Accuracy Models:</strong> Use MobileNetV2 deep features + ML for 90-99% accuracy!
-                        </p>
-                    </div>
-
-                    <!-- Upload Area -->
-                    <div class="upload-area" id="uploadArea">
-                        <input type="file" id="imageInput" accept="image/*" hidden>
-                        <div class="upload-placeholder">
-                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                            <p class="upload-text">Click or drag image here</p>
-                            <span class="upload-hint">PNG, JPG, GIF up to 10MB</span>
-                        </div>
-                        <img id="preview" class="preview-image" hidden>
-                    </div>
-
-                    <!-- Classify Button -->
-                    <button class="btn btn-primary" id="classifyBtn" disabled>
-                        <span class="btn-text">Classify Image</span>
-                    </button>
-
-                    <!-- Results -->
-                    <div id="resultContainer" class="result-container hidden">
-                        <div class="result-card">
-                            <div class="result-header">
-                                <span class="result-icon" id="resultIcon">🎯</span>
-                                <h3 class="result-title">Classification Result</h3>
-                            </div>
-                            <div class="result-body">
-                                <div class="prediction-label" id="predictionText">...</div>
-                                <div class="confidence-bar">
-                                    <div class="confidence-fill" id="confidenceFill"></div>
-                                </div>
-                                <div class="confidence-text">
-                                    <span>Confidence:</span>
-                                    <span id="confidenceText" class="confidence-value">0%</span>
-                                </div>
-                                <div class="model-badge">
-                                    <div><strong>Model:</strong> <span id="modelUsed">MobileNetV2</span></div>
-                                    <div class="model-desc" id="modelDesc">ImageNet pre-trained</div>
-                                </div>
-                                <div id="top3Container" class="top3-container hidden">
-                                    <h4 class="top3-title">Top 3 Predictions:</h4>
-                                    <div id="top3List" class="top3-list"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <main class="main-content">
+            <!-- URL Tab -->
+            <div id="url-scrape" class="view-section active">
+                <header class="section-header">
+                    <h2>Analyze URL</h2>
+                    <p>Extract and summarize content from a single webpage.</p>
+                </header>
+                
+                <div class="input-card">
+                    <input type="url" id="url-input" placeholder="Paste URL here (e.g., https://example.com)...">
+                    <button onclick="scrapeUrl()" class="btn-primary">Analyze</button>
                 </div>
             </div>
-        </section>
 
-        <!-- Regression Section -->
-        <section id="regression" class="content-section">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Stock Price Prediction</h2>
-                    <p class="subtitle">Predict future stock prices using Linear Regression & LSTM</p>
-                </div>
-
-                <div class="card-body">
-                    <!-- Stock Input -->
-                    <div class="input-group">
-                        <label for="tickerInput">Stock Ticker Symbol:</label>
-                        <div class="input-wrapper">
-                            <input 
-                                type="text" 
-                                id="tickerInput" 
-                                placeholder="AAPL" 
-                                class="text-input"
-                                maxlength="10"
-                            >
-                            <button class="btn btn-primary" id="predictBtn">
-                                <span class="btn-text">Predict</span>
-                                <span class="btn-loader hidden">
-                                    <span class="spinner"></span>
-                                </span>
-                            </button>
-                        </div>
-                        <p class="input-hint">Examples: AAPL, GOOGL, MSFT, TSLA, AMZN</p>
-                    </div>
-
-                    <!-- Prediction Summary -->
-                    <div id="predictionSummary" class="prediction-summary hidden">
-                        <div class="summary-grid">
-                            <div class="summary-card">
-                                <div class="summary-label">Current Price</div>
-                                <div class="summary-value" id="currentPrice">$0.00</div>
-                            </div>
-                            <div class="summary-card highlight">
-                                <div class="summary-label">Next Day Prediction</div>
-                                <div class="summary-value" id="nextDayPrice">$0.00</div>
-                                <div class="summary-change" id="priceChange">+0.00%</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Chart -->
-                    <div class="chart-container">
-                        <canvas id="stockChart"></canvas>
-                    </div>
-
-                    <!-- Metrics -->
-                    <div id="metricsContainer" class="metrics-container hidden">
-                        <h3 class="metrics-title">Model Performance</h3>
-                        <div class="metrics-grid">
-                            <div class="metric-card">
-                                <div class="metric-label">Linear Regression</div>
-                                <div class="metric-values">
-                                    <div class="metric-item">
-                                        <span>MSE:</span>
-                                        <span id="lrMSE">-</span>
-                                    </div>
-                                    <div class="metric-item">
-                                        <span>R²:</span>
-                                        <span id="lrR2">-</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-label">LSTM</div>
-                                <div class="metric-values">
-                                    <div class="metric-item">
-                                        <span>MSE:</span>
-                                        <span id="lstmMSE">-</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Search Tab -->
+            <div id="topic-search" class="view-section">
+                <header class="section-header">
+                    <h2>Topic Research</h2>
+                    <p>Search the web and aggregate findings.</p>
+                </header>
+                
+                <div class="input-card">
+                    <input type="text" id="topic-input" placeholder="Enter topic (e.g., Climate Change)...">
+                    <button onclick="searchAndScrape()" class="btn-primary">Research</button>
                 </div>
             </div>
-        </section>
-    </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Built with TensorFlow, scikit-learn & Flask</p>
-    </footer>
+            <!-- Batch Tab -->
+            <div id="batch-scrape" class="view-section">
+                <header class="section-header">
+                    <h2>Batch Processing</h2>
+                    <p>Analyze multiple URLs simultaneously.</p>
+                </header>
+                
+                <div class="input-card">
+                    <textarea id="batch-urls" placeholder="Paste URLs (one per line)..."></textarea>
+                    <button onclick="batchScrape()" class="btn-primary">Process All</button>
+                </div>
+            </div>
 
-    <script src="app.js"></script>
+            <!-- Output Area -->
+            <div id="loading" class="loading-state hidden">
+                <div class="spinner"></div>
+                <span>Processing data...</span>
+            </div>
+
+            <div id="results" class="results-container hidden">
+                <!-- Content injected by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
